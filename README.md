@@ -51,12 +51,20 @@ Nodemailer
 git clone https://github.com/keenlyhere/cowtact
 ```
 2. `cd` into the backend folder and `npm install` to install the dependencies
-3. Run the migration and seeders
+3. Create a `.env` file in the backend folder and modify the following lines:
+```sh
+PORT=8000
+DB_FILE=db/dev.db
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRES_IN=604800
+SCHEMA=your_schema_name
+```
+4. Run the migration and seeders
 ```
 npx dotenv sequelize db:migrate
 npx dotenv sequelize db:seed:all
 ```
-4. Run `npm start` to start the backend server
-5. `cd` into the frontend folder and `npm install` to install the dependencies.
-6. Run `npm start` to start the frontend server
-7. Visit `http://localhost:3000` in your web browser to access the application.
+5. Run `npm start` to start the backend server
+6. `cd` into the frontend folder and `npm install` to install the dependencies.
+7. Run `npm start` to start the frontend server
+8. Visit `http://localhost:3000` in your web browser to access the application.
