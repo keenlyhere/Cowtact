@@ -11,7 +11,7 @@ const router = express.Router();
 // validateSignup middleware
 // checks if req.body.email exists and if it is an email
        // if req.body.password is not empty and a min length of 6
-// if any one of those fail, return error reesponse
+// if any one of those fail, return error response
 const validateSignup = [
     check("email")
         .exists({ checkFalsy: true })
@@ -37,11 +37,17 @@ const validateSignup = [
 
 // POST /api/users to sign up
 router.post("/", validateSignup, async (req, res, next) => {
-    const { email, password, firstName, lastName, birthday, displayPic } = req.body;
+    const { email, password, firstName, lastName, username, googleId } = req.body;
 
     const existingEmail = await User.findOne({
         where: {
             email: email
+        }
+    })
+
+    const existingUsername = await User.findOne({
+        where: {
+            username: username
         }
     })
 
@@ -52,7 +58,13 @@ router.post("/", validateSignup, async (req, res, next) => {
     err.errors = [];
 
     if (existingEmail) {
-        err.errors.push("User with that email already exists");
+        err.errors.push("Email already in use. Please choose a different email or login with your existing account.");
+
+        return next(err);
+    }
+
+    if (existingUsername) {
+        err.errors.push("Username already taken. Please choose a different username or log in with your existing account.");
 
         return next(err);
     }
@@ -62,9 +74,11 @@ router.post("/", validateSignup, async (req, res, next) => {
         password,
         firstName,
         lastName,
-        birthday,
-        displayPic
+        username,
+        googleId
     });
+
+    await sendWelcomeEmail(newUser.email);
 
     await setTokenCookie(res, user);
 
