@@ -58,7 +58,11 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     static async signup({ email, password, firstName, lastName, username, googleId }) {
-      const hashedPassword = bcrypt.hashSync(password);
+      let hashedPassword = null;
+
+      if (password) {
+        hashedPassword = bcrypt.hashSync(password);
+      }
 
       const user = await User.create({
         email,

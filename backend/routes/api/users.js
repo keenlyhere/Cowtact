@@ -19,24 +19,21 @@ const validateSignup = [
         .bail()
         .isEmail()
         .withMessage("Please provide a valid email."),
-    check("password")
-        .exists({ checkFalsy: true })
-        .withMessage("Password is required.")
-        .bail()
-        .isLength({ min: 6 })
-        .withMessage("Password must be 6 characters or more."),
+    // check("password")
+    //     .exists({ checkFalsy: true })
+    //     .withMessage("Password is required.")
+    //     .bail()
+    //     .isLength({ min: 6 })
+    //     .withMessage("Password must be 6 characters or more."),
     check("firstName", "First Name is required")
         .exists({ checkFalsy: true }),
     check("lastName", "Last Name is required")
         .exists({ checkFalsy: true }),
-    check("birthday")
-        .notEmpty()
-        .withMessage("Please enter your birthday"),
     handleValidationErrors
 ];
 
 // POST /api/users to sign up
-router.post("/", validateSignup, async (req, res, next) => {
+router.post("/", async (req, res, next) => {
     const { email, password, firstName, lastName, username, googleId } = req.body;
 
     const existingEmail = await User.findOne({
@@ -51,11 +48,12 @@ router.post("/", validateSignup, async (req, res, next) => {
         }
     })
 
-    const err = {};
-    err.status = 403;
-    err.statusCode = 403;
-    err.message = "User already exists"
-    err.errors = [];
+    const err = {
+        status: 403,
+        statusCode: 403,
+        message: "User already exists",
+        errors: []
+    };
 
     if (existingEmail) {
         err.errors.push("Email already in use. Please choose a different email or login with your existing account.");
